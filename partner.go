@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package freee
+package freeepm
 
 import (
 	"context"
@@ -11,12 +11,13 @@ import (
 	"github.com/zchee/freee-go/internal/apiquery"
 	"github.com/zchee/freee-go/internal/requestconfig"
 	"github.com/zchee/freee-go/option"
+	"github.com/zchee/freee-go/packages/pagination"
 	"github.com/zchee/freee-go/packages/param"
 	"github.com/zchee/freee-go/packages/respjson"
 )
 
 // PartnerService contains methods and other services that help with interacting
-// with the freee API.
+// with the zchee API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -35,34 +36,30 @@ func NewPartnerService(opts ...option.RequestOption) (r PartnerService) {
 }
 
 // 登録されている取引先の一覧を返します。
-func (r *PartnerService) List(ctx context.Context, query PartnerListParams, opts ...option.RequestOption) (res *PartnerListResponse, err error) {
+func (r *PartnerService) List(ctx context.Context, query PartnerListParams, opts ...option.RequestOption) (res *pagination.PartnersOffset[PartnerListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "partners"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
 }
 
-type PartnerListResponse struct {
-	// ページネーションのメタ情報
-	Meta     Meta                         `json:"meta,required"`
-	Partners []PartnerListResponsePartner `json:"partners,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Meta        respjson.Field
-		Partners    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r PartnerListResponse) RawJSON() string { return r.JSON.raw }
-func (r *PartnerListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+// 登録されている取引先の一覧を返します。
+func (r *PartnerService) ListAutoPaging(ctx context.Context, query PartnerListParams, opts ...option.RequestOption) *pagination.PartnersOffsetAutoPager[PartnerListResponse] {
+	return pagination.NewPartnersOffsetAutoPager(r.List(ctx, query, opts...))
 }
 
 // 取引先情報
-type PartnerListResponsePartner struct {
+type PartnerListResponse struct {
 	// 取引先 ID
 	ID int64 `json:"id"`
 	// 取引先 code
@@ -70,9 +67,9 @@ type PartnerListResponsePartner struct {
 	// 取引先名前
 	Name string `json:"name"`
 	// 発注先として登録されているプロジェクト一覧
-	ProjectsAsContractor []PartnerListResponsePartnerProjectsAsContractor `json:"projects_as_contractor"`
+	ProjectsAsContractor []PartnerListResponseProjectsAsContractor `json:"projects_as_contractor"`
 	// 発注元として登録されているプロジェクト一覧
-	ProjectsAsOrderer []PartnerListResponsePartnerProjectsAsOrderer `json:"projects_as_orderer"`
+	ProjectsAsOrderer []PartnerListResponseProjectsAsOrderer `json:"projects_as_orderer"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                   respjson.Field
@@ -86,12 +83,12 @@ type PartnerListResponsePartner struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r PartnerListResponsePartner) RawJSON() string { return r.JSON.raw }
-func (r *PartnerListResponsePartner) UnmarshalJSON(data []byte) error {
+func (r PartnerListResponse) RawJSON() string { return r.JSON.raw }
+func (r *PartnerListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type PartnerListResponsePartnerProjectsAsContractor struct {
+type PartnerListResponseProjectsAsContractor struct {
 	// プロジェクト ID
 	ProjectID int64 `json:"project_id"`
 	// プロジェクト名
@@ -106,12 +103,12 @@ type PartnerListResponsePartnerProjectsAsContractor struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r PartnerListResponsePartnerProjectsAsContractor) RawJSON() string { return r.JSON.raw }
-func (r *PartnerListResponsePartnerProjectsAsContractor) UnmarshalJSON(data []byte) error {
+func (r PartnerListResponseProjectsAsContractor) RawJSON() string { return r.JSON.raw }
+func (r *PartnerListResponseProjectsAsContractor) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type PartnerListResponsePartnerProjectsAsOrderer struct {
+type PartnerListResponseProjectsAsOrderer struct {
 	// プロジェクト ID
 	ProjectID int64 `json:"project_id"`
 	// プロジェクト名
@@ -126,8 +123,8 @@ type PartnerListResponsePartnerProjectsAsOrderer struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r PartnerListResponsePartnerProjectsAsOrderer) RawJSON() string { return r.JSON.raw }
-func (r *PartnerListResponsePartnerProjectsAsOrderer) UnmarshalJSON(data []byte) error {
+func (r PartnerListResponseProjectsAsOrderer) RawJSON() string { return r.JSON.raw }
+func (r *PartnerListResponseProjectsAsOrderer) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package freee
+package freeepm
 
 import (
 	"context"
@@ -11,12 +11,13 @@ import (
 	"github.com/zchee/freee-go/internal/apiquery"
 	"github.com/zchee/freee-go/internal/requestconfig"
 	"github.com/zchee/freee-go/option"
+	"github.com/zchee/freee-go/packages/pagination"
 	"github.com/zchee/freee-go/packages/param"
 	"github.com/zchee/freee-go/packages/respjson"
 )
 
 // WorkloadSummaryService contains methods and other services that help with
-// interacting with the freee API.
+// interacting with the zchee API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -36,34 +37,31 @@ func NewWorkloadSummaryService(opts ...option.RequestOption) (r WorkloadSummaryS
 
 // 取得対象の従業員の工数実績のサマリを返します。 取得対象従業員と年月の取得範囲で
 // 絞り込みできます。
-func (r *WorkloadSummaryService) List(ctx context.Context, query WorkloadSummaryListParams, opts ...option.RequestOption) (res *WorkloadSummaryListResponse, err error) {
+func (r *WorkloadSummaryService) List(ctx context.Context, query WorkloadSummaryListParams, opts ...option.RequestOption) (res *pagination.WorkloadSummariesOffset[WorkloadSummaryListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "workload_summaries"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
 }
 
-type WorkloadSummaryListResponse struct {
-	// ページネーションのメタ情報
-	Meta              Meta                                         `json:"meta,required"`
-	WorkloadSummaries []WorkloadSummaryListResponseWorkloadSummary `json:"workload_summaries,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Meta              respjson.Field
-		WorkloadSummaries respjson.Field
-		ExtraFields       map[string]respjson.Field
-		raw               string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkloadSummaryListResponse) RawJSON() string { return r.JSON.raw }
-func (r *WorkloadSummaryListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+// 取得対象の従業員の工数実績のサマリを返します。 取得対象従業員と年月の取得範囲で
+// 絞り込みできます。
+func (r *WorkloadSummaryService) ListAutoPaging(ctx context.Context, query WorkloadSummaryListParams, opts ...option.RequestOption) *pagination.WorkloadSummariesOffsetAutoPager[WorkloadSummaryListResponse] {
+	return pagination.NewWorkloadSummariesOffsetAutoPager(r.List(ctx, query, opts...))
 }
 
 // 工数実績サマリ
-type WorkloadSummaryListResponseWorkloadSummary struct {
+type WorkloadSummaryListResponse struct {
 	// 工数登録期間 from
 	FromDate string `json:"from_date"`
 	// 工数実績（分）
@@ -90,8 +88,8 @@ type WorkloadSummaryListResponseWorkloadSummary struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r WorkloadSummaryListResponseWorkloadSummary) RawJSON() string { return r.JSON.raw }
-func (r *WorkloadSummaryListResponseWorkloadSummary) UnmarshalJSON(data []byte) error {
+func (r WorkloadSummaryListResponse) RawJSON() string { return r.JSON.raw }
+func (r *WorkloadSummaryListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

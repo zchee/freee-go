@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package freee
+package freeepm
 
 import (
 	"context"
@@ -12,12 +12,13 @@ import (
 	"github.com/zchee/freee-go/internal/apiquery"
 	"github.com/zchee/freee-go/internal/requestconfig"
 	"github.com/zchee/freee-go/option"
+	"github.com/zchee/freee-go/packages/pagination"
 	"github.com/zchee/freee-go/packages/param"
 	"github.com/zchee/freee-go/packages/respjson"
 )
 
 // ProjectService contains methods and other services that help with interacting
-// with the freee API.
+// with the zchee API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -53,11 +54,27 @@ func (r *ProjectService) Get(ctx context.Context, id int64, query ProjectGetPara
 
 // この事業所のプロジェクトの一覧情報を返します。 運用ステータス、マネージャー、発
 // 注先、発注元で絞り込みできます。
-func (r *ProjectService) List(ctx context.Context, query ProjectListParams, opts ...option.RequestOption) (res *ProjectListResponse, err error) {
+func (r *ProjectService) List(ctx context.Context, query ProjectListParams, opts ...option.RequestOption) (res *pagination.ProjectsOffset[ProjectListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "projects"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// この事業所のプロジェクトの一覧情報を返します。 運用ステータス、マネージャー、発
+// 注先、発注元で絞り込みできます。
+func (r *ProjectService) ListAutoPaging(ctx context.Context, query ProjectListParams, opts ...option.RequestOption) *pagination.ProjectsOffsetAutoPager[ProjectListResponse] {
+	return pagination.NewProjectsOffsetAutoPager(r.List(ctx, query, opts...))
 }
 
 // ページネーションのメタ情報
@@ -509,29 +526,8 @@ func (r *ProjectGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ProjectListResponse struct {
-	// ページネーションのメタ情報
-	Meta           Meta                              `json:"meta,required"`
-	Projects       []ProjectListResponseProject      `json:"projects,required"`
-	ProjectsCounts ProjectListResponseProjectsCounts `json:"projects_counts,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Meta           respjson.Field
-		Projects       respjson.Field
-		ProjectsCounts respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ProjectListResponse) RawJSON() string { return r.JSON.raw }
-func (r *ProjectListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // プロジェクト
-type ProjectListResponseProject struct {
+type ProjectListResponse struct {
 	// プロジェクト ID
 	ID int64 `json:"id"`
 	// 招待リンク
@@ -541,23 +537,23 @@ type ProjectListResponseProject struct {
 	// カラー
 	Color string `json:"color"`
 	// 発注先
-	Contractors []ProjectListResponseProjectContractor `json:"contractors"`
+	Contractors []ProjectListResponseContractor `json:"contractors"`
 	// プロジェクト概要
 	Description string `json:"description,nullable"`
 	// 期間 from
 	FromDate string `json:"from_date"`
 	// プロジェクトマネージャー
-	Manager ProjectListResponseProjectManager `json:"manager"`
+	Manager ProjectListResponseManager `json:"manager"`
 	// プロジェクトメンバー
-	Members []ProjectListResponseProjectMember `json:"members"`
+	Members []ProjectListResponseMember `json:"members"`
 	// プロジェクト名
 	Name string `json:"name"`
 	// 運用ステータス
 	OperationalStatus string `json:"operational_status"`
 	// 発注元
-	Orderers []ProjectListResponseProjectOrderer `json:"orderers"`
+	Orderers []ProjectListResponseOrderer `json:"orderers"`
 	// プロジェクトタグ
-	ProjectTags []ProjectListResponseProjectProjectTag `json:"project_tags"`
+	ProjectTags []ProjectListResponseProjectTag `json:"project_tags"`
 	// 従業員への公開設定
 	PublishToEmployee bool `json:"publish_to_employee"`
 	// 受注ステータス
@@ -565,7 +561,7 @@ type ProjectListResponseProject struct {
 	// 期間 to
 	ThruDate string `json:"thru_date"`
 	// プロジェクトで使える工数タグのグループ
-	WorkloadTagGroups []ProjectListResponseProjectWorkloadTagGroup `json:"workload_tag_groups"`
+	WorkloadTagGroups []ProjectListResponseWorkloadTagGroup `json:"workload_tag_groups"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                   respjson.Field
@@ -591,12 +587,12 @@ type ProjectListResponseProject struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ProjectListResponseProject) RawJSON() string { return r.JSON.raw }
-func (r *ProjectListResponseProject) UnmarshalJSON(data []byte) error {
+func (r ProjectListResponse) RawJSON() string { return r.JSON.raw }
+func (r *ProjectListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ProjectListResponseProjectContractor struct {
+type ProjectListResponseContractor struct {
 	// 取引先コード
 	PartnerCode string `json:"partner_code,nullable"`
 	// 取引先 ID
@@ -614,13 +610,13 @@ type ProjectListResponseProjectContractor struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ProjectListResponseProjectContractor) RawJSON() string { return r.JSON.raw }
-func (r *ProjectListResponseProjectContractor) UnmarshalJSON(data []byte) error {
+func (r ProjectListResponseContractor) RawJSON() string { return r.JSON.raw }
+func (r *ProjectListResponseContractor) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // プロジェクトマネージャー
-type ProjectListResponseProjectManager struct {
+type ProjectListResponseManager struct {
 	// ユーザ ID
 	PersonID int64 `json:"person_id"`
 	// 氏名
@@ -635,12 +631,12 @@ type ProjectListResponseProjectManager struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ProjectListResponseProjectManager) RawJSON() string { return r.JSON.raw }
-func (r *ProjectListResponseProjectManager) UnmarshalJSON(data []byte) error {
+func (r ProjectListResponseManager) RawJSON() string { return r.JSON.raw }
+func (r *ProjectListResponseManager) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ProjectListResponseProjectMember struct {
+type ProjectListResponseMember struct {
 	// ユーザ ID
 	PersonID int64 `json:"person_id"`
 	// 氏名
@@ -655,12 +651,12 @@ type ProjectListResponseProjectMember struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ProjectListResponseProjectMember) RawJSON() string { return r.JSON.raw }
-func (r *ProjectListResponseProjectMember) UnmarshalJSON(data []byte) error {
+func (r ProjectListResponseMember) RawJSON() string { return r.JSON.raw }
+func (r *ProjectListResponseMember) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ProjectListResponseProjectOrderer struct {
+type ProjectListResponseOrderer struct {
 	// 取引先コード
 	PartnerCode string `json:"partner_code,nullable"`
 	// 取引先 ID
@@ -678,12 +674,12 @@ type ProjectListResponseProjectOrderer struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ProjectListResponseProjectOrderer) RawJSON() string { return r.JSON.raw }
-func (r *ProjectListResponseProjectOrderer) UnmarshalJSON(data []byte) error {
+func (r ProjectListResponseOrderer) RawJSON() string { return r.JSON.raw }
+func (r *ProjectListResponseOrderer) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ProjectListResponseProjectProjectTag struct {
+type ProjectListResponseProjectTag struct {
 	// タググループ名
 	TagGroupName string `json:"tag_group_name"`
 	// タグ名
@@ -698,12 +694,12 @@ type ProjectListResponseProjectProjectTag struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ProjectListResponseProjectProjectTag) RawJSON() string { return r.JSON.raw }
-func (r *ProjectListResponseProjectProjectTag) UnmarshalJSON(data []byte) error {
+func (r ProjectListResponseProjectTag) RawJSON() string { return r.JSON.raw }
+func (r *ProjectListResponseProjectTag) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ProjectListResponseProjectWorkloadTagGroup struct {
+type ProjectListResponseWorkloadTagGroup struct {
 	// 工数登録時に必須かどうかのフラグ
 	Required bool `json:"required"`
 	// タググループ ID
@@ -711,7 +707,7 @@ type ProjectListResponseProjectWorkloadTagGroup struct {
 	// タググループ名
 	TagGroupName string `json:"tag_group_name"`
 	// タグ
-	Tags []ProjectListResponseProjectWorkloadTagGroupTag `json:"tags"`
+	Tags []ProjectListResponseWorkloadTagGroupTag `json:"tags"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Required     respjson.Field
@@ -724,12 +720,12 @@ type ProjectListResponseProjectWorkloadTagGroup struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ProjectListResponseProjectWorkloadTagGroup) RawJSON() string { return r.JSON.raw }
-func (r *ProjectListResponseProjectWorkloadTagGroup) UnmarshalJSON(data []byte) error {
+func (r ProjectListResponseWorkloadTagGroup) RawJSON() string { return r.JSON.raw }
+func (r *ProjectListResponseWorkloadTagGroup) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ProjectListResponseProjectWorkloadTagGroupTag struct {
+type ProjectListResponseWorkloadTagGroupTag struct {
 	// タグ ID
 	ID int64 `json:"id"`
 	// タグ名
@@ -744,56 +740,8 @@ type ProjectListResponseProjectWorkloadTagGroupTag struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ProjectListResponseProjectWorkloadTagGroupTag) RawJSON() string { return r.JSON.raw }
-func (r *ProjectListResponseProjectWorkloadTagGroupTag) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ProjectListResponseProjectsCounts struct {
-	ByStatus ProjectListResponseProjectsCountsByStatus `json:"by_status"`
-	// 取得件数合計
-	Total int64 `json:"total"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ByStatus    respjson.Field
-		Total       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ProjectListResponseProjectsCounts) RawJSON() string { return r.JSON.raw }
-func (r *ProjectListResponseProjectsCounts) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ProjectListResponseProjectsCountsByStatus struct {
-	// 承認待ち件数
-	AwaitingApproval int64 `json:"awaiting_approval"`
-	// 終了件数
-	Done int64 `json:"done"`
-	// 運用中件数
-	InProgress int64 `json:"in_progress"`
-	// 計画中件数
-	Planning int64 `json:"planning"`
-	// 差し戻し件数
-	Rejected int64 `json:"rejected"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		AwaitingApproval respjson.Field
-		Done             respjson.Field
-		InProgress       respjson.Field
-		Planning         respjson.Field
-		Rejected         respjson.Field
-		ExtraFields      map[string]respjson.Field
-		raw              string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ProjectListResponseProjectsCountsByStatus) RawJSON() string { return r.JSON.raw }
-func (r *ProjectListResponseProjectsCountsByStatus) UnmarshalJSON(data []byte) error {
+func (r ProjectListResponseWorkloadTagGroupTag) RawJSON() string { return r.JSON.raw }
+func (r *ProjectListResponseWorkloadTagGroupTag) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

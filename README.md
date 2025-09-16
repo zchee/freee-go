@@ -1,4 +1,4 @@
-# Freee Go API Library
+# Zchee Go API Library
 
 <!-- x-release-please-start-version -->
 
@@ -6,7 +6,7 @@
 
 <!-- x-release-please-end -->
 
-The Freee Go library provides convenient access to the Freee REST API
+The Zchee Go library provides convenient access to the Zchee REST API
 from applications written in Go.
 
 It is generated with [Stainless](https://www.stainless.com/).
@@ -17,7 +17,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 ```go
 import (
-	"github.com/zchee/freee-go" // imported as freee
+	"github.com/zchee/freee-go" // imported as freeepm
 )
 ```
 
@@ -53,7 +53,7 @@ import (
 )
 
 func main() {
-	client := freee.NewClient(
+	client := freeepm.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("FREEE_API_KEY")
 	)
 	response, err := client.Users.GetMe(context.TODO())
@@ -67,13 +67,13 @@ func main() {
 
 ### Request fields
 
-The freee library uses the [`omitzero`](https://tip.golang.org/doc/go1.24#encodingjsonpkgencodingjson)
+The freeepm library uses the [`omitzero`](https://tip.golang.org/doc/go1.24#encodingjsonpkgencodingjson)
 semantics from the Go 1.24+ `encoding/json` release for request fields.
 
 Required primitive fields (`int64`, `string`, etc.) feature the tag <code>\`json:"...,required"\`</code>. These
 fields are always serialized, even their zero values.
 
-Optional primitive types are wrapped in a `param.Opt[T]`. These fields can be set with the provided constructors, `freee.String(string)`, `freee.Int(int64)`, etc.
+Optional primitive types are wrapped in a `param.Opt[T]`. These fields can be set with the provided constructors, `freeepm.String(string)`, `freeepm.Int(int64)`, etc.
 
 Any `param.Opt[T]`, map, slice, struct or string enum uses the
 tag <code>\`json:"...,omitzero"\`</code>. Its zero value is considered omitted.
@@ -81,17 +81,17 @@ tag <code>\`json:"...,omitzero"\`</code>. Its zero value is considered omitted.
 The `param.IsOmitted(any)` function can confirm the presence of any `omitzero` field.
 
 ```go
-p := freee.ExampleParams{
-	ID:   "id_xxx",            // required property
-	Name: freee.String("..."), // optional property
+p := freeepm.ExampleParams{
+	ID:   "id_xxx",              // required property
+	Name: freeepm.String("..."), // optional property
 
-	Point: freee.Point{
-		X: 0,            // required field will serialize as 0
-		Y: freee.Int(1), // optional field will serialize as 1
+	Point: freeepm.Point{
+		X: 0,              // required field will serialize as 0
+		Y: freeepm.Int(1), // optional field will serialize as 1
 		// ... omitted non-required fields will not be serialized
 	},
 
-	Origin: freee.Origin{}, // the zero value of [Origin] is considered omitted
+	Origin: freeepm.Origin{}, // the zero value of [Origin] is considered omitted
 }
 ```
 
@@ -120,7 +120,7 @@ p.SetExtraFields(map[string]any{
 })
 
 // Send a number instead of an object
-custom := param.Override[freee.FooParams](12)
+custom := param.Override[freeepm.FooParams](12)
 ```
 
 ### Request unions
@@ -261,7 +261,7 @@ This library uses the functional options pattern. Functions defined in the
 requests. For example:
 
 ```go
-client := freee.NewClient(
+client := freeepm.NewClient(
 	// Adds a header to every request made by the client
 	option.WithHeader("X-Some-Header", "custom_header_info"),
 )
@@ -290,7 +290,7 @@ with additional helper methods like `.GetNextPage()`, e.g.:
 ### Errors
 
 When the API returns a non-success status code, we return an error with type
-`*freee.Error`. This contains the `StatusCode`, `*http.Request`, and
+`*freeepm.Error`. This contains the `StatusCode`, `*http.Request`, and
 `*http.Response` values of the request, as well as the JSON of the error body
 (much like other response objects in the SDK).
 
@@ -299,7 +299,7 @@ To handle errors, we recommend that you use the `errors.As` pattern:
 ```go
 _, err := client.Users.GetMe(context.TODO())
 if err != nil {
-	var apierr *freee.Error
+	var apierr *freeepm.Error
 	if errors.As(err, &apierr) {
 		println(string(apierr.DumpRequest(true)))  // Prints the serialized HTTP request
 		println(string(apierr.DumpResponse(true))) // Prints the serialized HTTP response
@@ -339,7 +339,7 @@ The file name and content-type can be customized by implementing `Name() string`
 string` on the run-time type of `io.Reader`. Note that `os.File` implements `Name() string`, so a
 file returned by `os.Open` will be sent with the file name on disk.
 
-We also provide a helper `freee.File(reader io.Reader, filename string, contentType string)`
+We also provide a helper `freeepm.File(reader io.Reader, filename string, contentType string)`
 which can be used to wrap any `io.Reader` with the appropriate file name and content type.
 
 ### Retries
@@ -352,7 +352,7 @@ You can use the `WithMaxRetries` option to configure or disable this:
 
 ```go
 // Configure the default for all requests:
-client := freee.NewClient(
+client := freeepm.NewClient(
 	option.WithMaxRetries(0), // default is 2
 )
 
@@ -413,7 +413,7 @@ or the `option.WithJSONSet()` methods.
 params := FooNewParams{
     ID:   "id_xxxx",
     Data: FooNewParamsData{
-        FirstName: freee.String("John"),
+        FirstName: freeepm.String("John"),
     },
 }
 client.Foo.New(context.Background(), params, option.WithJSONSet("data.last_name", "Doe"))
@@ -448,7 +448,7 @@ func Logger(req *http.Request, next option.MiddlewareNext) (res *http.Response, 
     return res, err
 }
 
-client := freee.NewClient(
+client := freeepm.NewClient(
 	option.WithMiddleware(Logger),
 )
 ```
