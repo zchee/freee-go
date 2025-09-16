@@ -18,15 +18,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stainless-sdks/freee-go/internal"
-	"github.com/stainless-sdks/freee-go/internal/apierror"
-	"github.com/stainless-sdks/freee-go/internal/apiform"
-	"github.com/stainless-sdks/freee-go/internal/apiquery"
+	"github.com/zchee/freee-go/internal"
+	"github.com/zchee/freee-go/internal/apierror"
+	"github.com/zchee/freee-go/internal/apiform"
+	"github.com/zchee/freee-go/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {
 	return map[string]string{
-		"User-Agent": fmt.Sprintf("Freee/Go %s", internal.PackageVersion),
+		"User-Agent": fmt.Sprintf("Zchee/Go %s", internal.PackageVersion),
 	}
 }
 

@@ -1,7 +1,7 @@
 package apijson
 
 import (
-	"github.com/stainless-sdks/freee-go/packages/respjson"
+	"github.com/zchee/freee-go/packages/respjson"
 	"reflect"
 )
 

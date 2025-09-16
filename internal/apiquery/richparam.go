@@ -1,7 +1,7 @@
 package apiquery
 
 import (
-	"github.com/stainless-sdks/freee-go/packages/param"
+	"github.com/zchee/freee-go/packages/param"
 	"reflect"
 )
 

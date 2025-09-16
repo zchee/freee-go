@@ -1,8 +1,8 @@
 package paramutil
 
 import (
-	"github.com/stainless-sdks/freee-go/packages/param"
-	"github.com/stainless-sdks/freee-go/packages/respjson"
+	"github.com/zchee/freee-go/packages/param"
+	"github.com/zchee/freee-go/packages/respjson"
 )
 
 func AddrIfPresent[T comparable](v param.Opt[T]) *T {

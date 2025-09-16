@@ -2,7 +2,7 @@ package param
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/freee-go/internal/encoding/json/sentinel"
+	"github.com/zchee/freee-go/internal/encoding/json/sentinel"
 	"reflect"
 )
 

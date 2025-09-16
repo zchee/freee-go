@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"time"
 
-	shimjson "github.com/stainless-sdks/freee-go/internal/encoding/json"
+	shimjson "github.com/zchee/freee-go/internal/encoding/json"
 
 	"github.com/tidwall/sjson"
 )

@@ -1,8 +1,8 @@
 package sentinel_test
 
 import (
-	"github.com/stainless-sdks/freee-go/internal/encoding/json/sentinel"
-	"github.com/stainless-sdks/freee-go/packages/param"
+	"github.com/zchee/freee-go/internal/encoding/json/sentinel"
+	"github.com/zchee/freee-go/packages/param"
 	"reflect"
 	"slices"
 	"testing"

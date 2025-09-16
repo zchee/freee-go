@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/freee-go"
-	"github.com/stainless-sdks/freee-go/internal"
-	"github.com/stainless-sdks/freee-go/option"
+	"github.com/zchee/freee-go"
+	"github.com/zchee/freee-go/internal"
+	"github.com/zchee/freee-go/option"
 )
 
 type closureTransport struct {
@@ -39,7 +39,7 @@ func TestUserAgentHeader(t *testing.T) {
 		}),
 	)
 	client.Users.GetMe(context.Background())
-	if userAgent != fmt.Sprintf("Freee/Go %s", internal.PackageVersion) {
+	if userAgent != fmt.Sprintf("Zchee/Go %s", internal.PackageVersion) {
 		t.Errorf("Expected User-Agent to be correct, but got: %#v", userAgent)
 	}
 }

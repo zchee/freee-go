@@ -8,9 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/freee-go"
-	"github.com/stainless-sdks/freee-go/internal/testutil"
-	"github.com/stainless-sdks/freee-go/option"
+	"github.com/zchee/freee-go"
+	"github.com/zchee/freee-go/internal/testutil"
+	"github.com/zchee/freee-go/option"
 )
 
 func TestUnitCostListWithOptionalParams(t *testing.T) {

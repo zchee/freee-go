@@ -8,16 +8,17 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/stainless-sdks/freee-go/internal/apijson"
-	"github.com/stainless-sdks/freee-go/internal/apiquery"
-	"github.com/stainless-sdks/freee-go/internal/requestconfig"
-	"github.com/stainless-sdks/freee-go/option"
-	"github.com/stainless-sdks/freee-go/packages/param"
-	"github.com/stainless-sdks/freee-go/packages/respjson"
+	"github.com/zchee/freee-go/internal/apijson"
+	"github.com/zchee/freee-go/internal/apiquery"
+	"github.com/zchee/freee-go/internal/requestconfig"
+	"github.com/zchee/freee-go/option"
+	"github.com/zchee/freee-go/packages/pagination"
+	"github.com/zchee/freee-go/packages/param"
+	"github.com/zchee/freee-go/packages/respjson"
 )
 
 // WorkloadService contains methods and other services that help with interacting
-// with the freee API.
+// with the zchee API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -45,11 +46,27 @@ func (r *WorkloadService) New(ctx context.Context, body WorkloadNewParams, opts 
 
 // 取得対象の従業員の工数実績の詳細を返します。 取得対象従業員と年月の取得範囲で絞
 // り込みできます。
-func (r *WorkloadService) List(ctx context.Context, query WorkloadListParams, opts ...option.RequestOption) (res *WorkloadListResponse, err error) {
+func (r *WorkloadService) List(ctx context.Context, query WorkloadListParams, opts ...option.RequestOption) (res *pagination.WorkloadsOffset[Workload], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "workloads"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// 取得対象の従業員の工数実績の詳細を返します。 取得対象従業員と年月の取得範囲で絞
+// り込みできます。
+func (r *WorkloadService) ListAutoPaging(ctx context.Context, query WorkloadListParams, opts ...option.RequestOption) *pagination.WorkloadsOffsetAutoPager[Workload] {
+	return pagination.NewWorkloadsOffsetAutoPager(r.List(ctx, query, opts...))
 }
 
 // 工数実績詳細
@@ -137,25 +154,6 @@ type WorkloadNewResponse struct {
 // Returns the unmodified JSON received from the API
 func (r WorkloadNewResponse) RawJSON() string { return r.JSON.raw }
 func (r *WorkloadNewResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type WorkloadListResponse struct {
-	// ページネーションのメタ情報
-	Meta      Meta       `json:"meta,required"`
-	Workloads []Workload `json:"workloads,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Meta        respjson.Field
-		Workloads   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkloadListResponse) RawJSON() string { return r.JSON.raw }
-func (r *WorkloadListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

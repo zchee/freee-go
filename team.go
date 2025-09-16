@@ -7,16 +7,17 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/stainless-sdks/freee-go/internal/apijson"
-	"github.com/stainless-sdks/freee-go/internal/apiquery"
-	"github.com/stainless-sdks/freee-go/internal/requestconfig"
-	"github.com/stainless-sdks/freee-go/option"
-	"github.com/stainless-sdks/freee-go/packages/param"
-	"github.com/stainless-sdks/freee-go/packages/respjson"
+	"github.com/zchee/freee-go/internal/apijson"
+	"github.com/zchee/freee-go/internal/apiquery"
+	"github.com/zchee/freee-go/internal/requestconfig"
+	"github.com/zchee/freee-go/option"
+	"github.com/zchee/freee-go/packages/pagination"
+	"github.com/zchee/freee-go/packages/param"
+	"github.com/zchee/freee-go/packages/respjson"
 )
 
 // TeamService contains methods and other services that help with interacting with
-// the freee API.
+// the zchee API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -35,34 +36,30 @@ func NewTeamService(opts ...option.RequestOption) (r TeamService) {
 }
 
 // 登録されているチームの一覧を返します。
-func (r *TeamService) List(ctx context.Context, query TeamListParams, opts ...option.RequestOption) (res *TeamListResponse, err error) {
+func (r *TeamService) List(ctx context.Context, query TeamListParams, opts ...option.RequestOption) (res *pagination.TeamsOffsetPage[TeamListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "teams"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
 }
 
-type TeamListResponse struct {
-	// ページネーションのメタ情報
-	Meta  Meta                   `json:"meta,required"`
-	Teams []TeamListResponseTeam `json:"teams,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Meta        respjson.Field
-		Teams       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TeamListResponse) RawJSON() string { return r.JSON.raw }
-func (r *TeamListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+// 登録されているチームの一覧を返します。
+func (r *TeamService) ListAutoPaging(ctx context.Context, query TeamListParams, opts ...option.RequestOption) *pagination.TeamsOffsetPageAutoPager[TeamListResponse] {
+	return pagination.NewTeamsOffsetPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // チーム情報
-type TeamListResponseTeam struct {
+type TeamListResponse struct {
 	// チーム ID
 	ID int64 `json:"id,required"`
 	// メンバー数
@@ -70,7 +67,7 @@ type TeamListResponseTeam struct {
 	// チーム名
 	Name string `json:"name,required"`
 	// チームに登録されているメンバーの配列
-	Members []TeamListResponseTeamMember `json:"members"`
+	Members []TeamListResponseMember `json:"members"`
 	// memo
 	Memo string `json:"memo,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -86,12 +83,12 @@ type TeamListResponseTeam struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TeamListResponseTeam) RawJSON() string { return r.JSON.raw }
-func (r *TeamListResponseTeam) UnmarshalJSON(data []byte) error {
+func (r TeamListResponse) RawJSON() string { return r.JSON.raw }
+func (r *TeamListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type TeamListResponseTeamMember struct {
+type TeamListResponseMember struct {
 	// リーダフラグ、リーダならば true
 	IsLeader bool `json:"is_leader,required"`
 	// チームに所属している従業員 ID
@@ -109,8 +106,8 @@ type TeamListResponseTeamMember struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TeamListResponseTeamMember) RawJSON() string { return r.JSON.raw }
-func (r *TeamListResponseTeamMember) UnmarshalJSON(data []byte) error {
+func (r TeamListResponseMember) RawJSON() string { return r.JSON.raw }
+func (r *TeamListResponseMember) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

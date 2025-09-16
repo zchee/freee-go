@@ -6,14 +6,14 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/stainless-sdks/freee-go/internal/apijson"
-	"github.com/stainless-sdks/freee-go/internal/requestconfig"
-	"github.com/stainless-sdks/freee-go/option"
-	"github.com/stainless-sdks/freee-go/packages/respjson"
+	"github.com/zchee/freee-go/internal/apijson"
+	"github.com/zchee/freee-go/internal/requestconfig"
+	"github.com/zchee/freee-go/option"
+	"github.com/zchee/freee-go/packages/respjson"
 )
 
 // UserService contains methods and other services that help with interacting with
-// the freee API.
+// the zchee API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
