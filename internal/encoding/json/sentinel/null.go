@@ -1,7 +1,7 @@
 package sentinel
 
 import (
-	"github.com/stainless-sdks/freee-go/internal/encoding/json/shims"
+	"github.com/zchee/freee-go/internal/encoding/json/shims"
 	"reflect"
 	"sync"
 )

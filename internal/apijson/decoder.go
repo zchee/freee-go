@@ -7,7 +7,7 @@ package apijson
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/freee-go/packages/param"
+	"github.com/zchee/freee-go/packages/param"
 	"reflect"
 	"strconv"
 	"sync"

@@ -3,8 +3,8 @@
 package freee
 
 import (
-	"github.com/stainless-sdks/freee-go/internal/apierror"
-	"github.com/stainless-sdks/freee-go/packages/param"
+	"github.com/zchee/freee-go/internal/apierror"
+	"github.com/zchee/freee-go/packages/param"
 )
 
 // aliased to make [param.APIUnion] private when embedding

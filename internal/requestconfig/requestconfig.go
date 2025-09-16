@@ -18,10 +18,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stainless-sdks/freee-go/internal"
-	"github.com/stainless-sdks/freee-go/internal/apierror"
-	"github.com/stainless-sdks/freee-go/internal/apiform"
-	"github.com/stainless-sdks/freee-go/internal/apiquery"
+	"github.com/zchee/freee-go/internal"
+	"github.com/zchee/freee-go/internal/apierror"
+	"github.com/zchee/freee-go/internal/apiform"
+	"github.com/zchee/freee-go/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {

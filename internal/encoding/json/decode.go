@@ -14,7 +14,7 @@ import (
 	"encoding"
 	"encoding/base64"
 	"fmt"
-	"github.com/stainless-sdks/freee-go/internal/encoding/json/shims"
+	"github.com/zchee/freee-go/internal/encoding/json/shims"
 	"reflect"
 	"strconv"
 	"strings"

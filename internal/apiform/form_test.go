@@ -2,7 +2,7 @@ package apiform
 
 import (
 	"bytes"
-	"github.com/stainless-sdks/freee-go/packages/param"
+	"github.com/zchee/freee-go/packages/param"
 	"io"
 	"mime/multipart"
 	"strings"

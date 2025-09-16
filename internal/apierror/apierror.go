@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"net/http/httputil"
 
-	"github.com/stainless-sdks/freee-go/internal/apijson"
-	"github.com/stainless-sdks/freee-go/packages/respjson"
+	"github.com/zchee/freee-go/internal/apijson"
+	"github.com/zchee/freee-go/packages/respjson"
 )
 
 // Error represents an error that originates from the API, i.e. when a request is
