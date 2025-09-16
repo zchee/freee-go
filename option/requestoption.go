@@ -11,15 +11,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stainless-sdks/freee-go/internal/requestconfig"
 	"github.com/tidwall/sjson"
+	"github.com/zchee/freee-go/internal/requestconfig"
 )
 
 // RequestOption is an option for the requests made by the freee API Client
 // which can be supplied to clients, services, and methods. You can read more about this functional
 // options pattern in our [README].
 //
-// [README]: https://pkg.go.dev/github.com/stainless-sdks/freee-go#readme-requestoptions
+// [README]: https://pkg.go.dev/github.com/zchee/freee-go#readme-requestoptions
 type RequestOption = requestconfig.RequestOption
 
 // WithBaseURL returns a RequestOption that sets the BaseURL for the client.

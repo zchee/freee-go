@@ -2,7 +2,7 @@
 package json
 
 import (
-	"github.com/stainless-sdks/freee-go/internal/encoding/json/shims"
+	"github.com/zchee/freee-go/internal/encoding/json/shims"
 	"reflect"
 	"time"
 )

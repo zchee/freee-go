@@ -3,8 +3,8 @@ package apijson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/freee-go/internal/apijson"
-	"github.com/stainless-sdks/freee-go/packages/param"
+	"github.com/zchee/freee-go/internal/apijson"
+	"github.com/zchee/freee-go/packages/param"
 	"reflect"
 	"testing"
 )

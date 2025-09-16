@@ -8,12 +8,12 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/stainless-sdks/freee-go/internal/apijson"
-	"github.com/stainless-sdks/freee-go/internal/apiquery"
-	"github.com/stainless-sdks/freee-go/internal/requestconfig"
-	"github.com/stainless-sdks/freee-go/option"
-	"github.com/stainless-sdks/freee-go/packages/param"
-	"github.com/stainless-sdks/freee-go/packages/respjson"
+	"github.com/zchee/freee-go/internal/apijson"
+	"github.com/zchee/freee-go/internal/apiquery"
+	"github.com/zchee/freee-go/internal/requestconfig"
+	"github.com/zchee/freee-go/option"
+	"github.com/zchee/freee-go/packages/param"
+	"github.com/zchee/freee-go/packages/respjson"
 )
 
 // WorkloadService contains methods and other services that help with interacting

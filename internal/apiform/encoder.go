@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/stainless-sdks/freee-go/packages/param"
+	"github.com/zchee/freee-go/packages/param"
 )
 
 var encoders sync.Map // map[encoderEntry]encoderFunc

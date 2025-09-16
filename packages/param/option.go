@@ -3,7 +3,7 @@ package param
 import (
 	"encoding/json"
 	"fmt"
-	shimjson "github.com/stainless-sdks/freee-go/internal/encoding/json"
+	shimjson "github.com/zchee/freee-go/internal/encoding/json"
 	"time"
 )
 

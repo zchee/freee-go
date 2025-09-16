@@ -1,4 +1,4 @@
-module github.com/stainless-sdks/freee-go
+module github.com/zchee/freee-go
 
 go 1.25
 

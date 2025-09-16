@@ -2,7 +2,7 @@ package param_test
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/freee-go/packages/param"
+	"github.com/zchee/freee-go/packages/param"
 	"testing"
 )
 

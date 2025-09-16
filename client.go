@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/stainless-sdks/freee-go/internal/requestconfig"
-	"github.com/stainless-sdks/freee-go/option"
+	"github.com/zchee/freee-go/internal/requestconfig"
+	"github.com/zchee/freee-go/option"
 )
 
 // Client creates a struct with services and top level methods that help with
