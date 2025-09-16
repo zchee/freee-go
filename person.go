@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package freee
+package freeepm
 
 import (
 	"context"
@@ -11,12 +11,13 @@ import (
 	"github.com/zchee/freee-go/internal/apiquery"
 	"github.com/zchee/freee-go/internal/requestconfig"
 	"github.com/zchee/freee-go/option"
+	"github.com/zchee/freee-go/packages/pagination"
 	"github.com/zchee/freee-go/packages/param"
 	"github.com/zchee/freee-go/packages/respjson"
 )
 
 // PersonService contains methods and other services that help with interacting
-// with the freee API.
+// with the zchee API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -36,36 +37,31 @@ func NewPersonService(opts ...option.RequestOption) (r PersonService) {
 
 // このリクエストで指定した ID の事業所の従業員一覧を返します。 権限・ステータス・
 // 従業員 ID で取得する情報を絞り込むことができます。
-func (r *PersonService) List(ctx context.Context, query PersonListParams, opts ...option.RequestOption) (res *PersonListResponse, err error) {
+func (r *PersonService) List(ctx context.Context, query PersonListParams, opts ...option.RequestOption) (res *pagination.PeopleOffset[PersonListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "people"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
 }
 
-type PersonListResponse struct {
-	// ページネーションのメタ情報
-	Meta         Meta                           `json:"meta,required"`
-	People       []PersonListResponsePerson     `json:"people,required"`
-	PeopleCounts PersonListResponsePeopleCounts `json:"people_counts,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Meta         respjson.Field
-		People       respjson.Field
-		PeopleCounts respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r PersonListResponse) RawJSON() string { return r.JSON.raw }
-func (r *PersonListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+// このリクエストで指定した ID の事業所の従業員一覧を返します。 権限・ステータス・
+// 従業員 ID で取得する情報を絞り込むことができます。
+func (r *PersonService) ListAutoPaging(ctx context.Context, query PersonListParams, opts ...option.RequestOption) *pagination.PeopleOffsetAutoPager[PersonListResponse] {
+	return pagination.NewPeopleOffsetAutoPager(r.List(ctx, query, opts...))
 }
 
 // 従業員情報
-type PersonListResponsePerson struct {
+type PersonListResponse struct {
 	// 従業員 ID
 	ID int64 `json:"id"`
 	// メールアドレス
@@ -81,7 +77,7 @@ type PersonListResponsePerson struct {
 	// ステータス
 	Status string `json:"status"`
 	// 標準単価
-	UnitCost PersonListResponsePersonUnitCost `json:"unit_cost"`
+	UnitCost PersonListResponseUnitCost `json:"unit_cost"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                respjson.Field
@@ -98,13 +94,13 @@ type PersonListResponsePerson struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r PersonListResponsePerson) RawJSON() string { return r.JSON.raw }
-func (r *PersonListResponsePerson) UnmarshalJSON(data []byte) error {
+func (r PersonListResponse) RawJSON() string { return r.JSON.raw }
+func (r *PersonListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // 標準単価
-type PersonListResponsePersonUnitCost struct {
+type PersonListResponseUnitCost struct {
 	// 標準単価 ID
 	ID int64 `json:"id"`
 	// 名前
@@ -119,50 +115,8 @@ type PersonListResponsePersonUnitCost struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r PersonListResponsePersonUnitCost) RawJSON() string { return r.JSON.raw }
-func (r *PersonListResponsePersonUnitCost) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type PersonListResponsePeopleCounts struct {
-	ByStatus PersonListResponsePeopleCountsByStatus `json:"by_status"`
-	// 取得件数合計
-	Total int64 `json:"total"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ByStatus    respjson.Field
-		Total       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r PersonListResponsePeopleCounts) RawJSON() string { return r.JSON.raw }
-func (r *PersonListResponsePeopleCounts) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type PersonListResponsePeopleCountsByStatus struct {
-	// 利用中従業員件数
-	Accepted int64 `json:"accepted"`
-	// 無効従業員件数
-	Inactive int64 `json:"inactive"`
-	// 招待済み従業員件数
-	Sent int64 `json:"sent"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Accepted    respjson.Field
-		Inactive    respjson.Field
-		Sent        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r PersonListResponsePeopleCountsByStatus) RawJSON() string { return r.JSON.raw }
-func (r *PersonListResponsePeopleCountsByStatus) UnmarshalJSON(data []byte) error {
+func (r PersonListResponseUnitCost) RawJSON() string { return r.JSON.raw }
+func (r *PersonListResponseUnitCost) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

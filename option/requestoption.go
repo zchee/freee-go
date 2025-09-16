@@ -15,7 +15,7 @@ import (
 	"github.com/zchee/freee-go/internal/requestconfig"
 )
 
-// RequestOption is an option for the requests made by the freee API Client
+// RequestOption is an option for the requests made by the zchee API Client
 // which can be supplied to clients, services, and methods. You can read more about this functional
 // options pattern in our [README].
 //

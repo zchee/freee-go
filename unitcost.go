@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package freee
+package freeepm
 
 import (
 	"context"
@@ -12,12 +12,13 @@ import (
 	"github.com/zchee/freee-go/internal/apiquery"
 	"github.com/zchee/freee-go/internal/requestconfig"
 	"github.com/zchee/freee-go/option"
+	"github.com/zchee/freee-go/packages/pagination"
 	"github.com/zchee/freee-go/packages/param"
 	"github.com/zchee/freee-go/packages/respjson"
 )
 
 // UnitCostService contains methods and other services that help with interacting
-// with the freee API.
+// with the zchee API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -36,34 +37,30 @@ func NewUnitCostService(opts ...option.RequestOption) (r UnitCostService) {
 }
 
 // 従業員の単価マスタを返します。
-func (r *UnitCostService) List(ctx context.Context, query UnitCostListParams, opts ...option.RequestOption) (res *UnitCostListResponse, err error) {
+func (r *UnitCostService) List(ctx context.Context, query UnitCostListParams, opts ...option.RequestOption) (res *pagination.UnitCostsOffset[UnitCostListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "unit_costs"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
 }
 
-type UnitCostListResponse struct {
-	// ページネーションのメタ情報
-	Meta      Meta                           `json:"meta,required"`
-	UnitCosts []UnitCostListResponseUnitCost `json:"unit_costs,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Meta        respjson.Field
-		UnitCosts   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r UnitCostListResponse) RawJSON() string { return r.JSON.raw }
-func (r *UnitCostListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+// 従業員の単価マスタを返します。
+func (r *UnitCostService) ListAutoPaging(ctx context.Context, query UnitCostListParams, opts ...option.RequestOption) *pagination.UnitCostsOffsetAutoPager[UnitCostListResponse] {
+	return pagination.NewUnitCostsOffsetAutoPager(r.List(ctx, query, opts...))
 }
 
 // 従業員単価マスタ
-type UnitCostListResponseUnitCost struct {
+type UnitCostListResponse struct {
 	// 単価マスタ ID
 	ID int64 `json:"id"`
 	// 取得時点での適用金額
@@ -71,7 +68,7 @@ type UnitCostListResponseUnitCost struct {
 	// 単価マスタ名
 	Name string `json:"name"`
 	// 期間ごとの適用金額の配列
-	Rules []UnitCostListResponseUnitCostRule `json:"rules"`
+	Rules []UnitCostListResponseRule `json:"rules"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -84,12 +81,12 @@ type UnitCostListResponseUnitCost struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r UnitCostListResponseUnitCost) RawJSON() string { return r.JSON.raw }
-func (r *UnitCostListResponseUnitCost) UnmarshalJSON(data []byte) error {
+func (r UnitCostListResponse) RawJSON() string { return r.JSON.raw }
+func (r *UnitCostListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type UnitCostListResponseUnitCostRule struct {
+type UnitCostListResponseRule struct {
 	// 適用期間の金額
 	Cost int64 `json:"cost"`
 	// 適用開始日
@@ -107,8 +104,8 @@ type UnitCostListResponseUnitCostRule struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r UnitCostListResponseUnitCostRule) RawJSON() string { return r.JSON.raw }
-func (r *UnitCostListResponseUnitCostRule) UnmarshalJSON(data []byte) error {
+func (r UnitCostListResponseRule) RawJSON() string { return r.JSON.raw }
+func (r *UnitCostListResponseRule) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

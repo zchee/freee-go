@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package freee_test
+package freeepm_test
 
 import (
 	"context"
@@ -22,20 +22,20 @@ func TestPersonListWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := freee.NewClient(
+	client := freeepm.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.People.List(context.TODO(), freee.PersonListParams{
+	_, err := client.People.List(context.TODO(), freeepm.PersonListParams{
 		CompanyID: 0,
-		Limit:     freee.Int(1),
-		Offset:    freee.Int(0),
+		Limit:     freeepm.Int(1),
+		Offset:    freeepm.Int(0),
 		PersonIDs: []int64{0},
-		Role:      freee.String("role"),
-		Status:    freee.PersonListParamsStatusSent,
+		Role:      freeepm.String("role"),
+		Status:    freeepm.PersonListParamsStatusSent,
 	})
 	if err != nil {
-		var apierr *freee.Error
+		var apierr *freeepm.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
