@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package freeepm_test
+package freee_test
 
 import (
 	"context"
@@ -23,24 +23,24 @@ func TestWorkloadNewWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := freeepm.NewClient(
+	client := freee.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Workloads.New(context.TODO(), freeepm.WorkloadNewParams{
+	_, err := client.Workloads.New(context.TODO(), freee.WorkloadNewParams{
 		CompanyID: 1,
 		Date:      time.Now(),
 		Minutes:   120,
 		ProjectID: 100,
-		Memo:      freeepm.String("コーディング"),
-		PersonID:  freeepm.Int(10),
-		WorkloadTags: []freeepm.WorkloadNewParamsWorkloadTag{{
+		Memo:      freee.String("コーディング"),
+		PersonID:  freee.Int(10),
+		WorkloadTags: []freee.WorkloadNewParamsWorkloadTag{{
 			TagGroupID: 11,
 			TagID:      12,
 		}},
 	})
 	if err != nil {
-		var apierr *freeepm.Error
+		var apierr *freee.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -57,21 +57,21 @@ func TestWorkloadListWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := freeepm.NewClient(
+	client := freee.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Workloads.List(context.TODO(), freeepm.WorkloadListParams{
+	_, err := client.Workloads.List(context.TODO(), freee.WorkloadListParams{
 		CompanyID:      0,
 		YearMonth:      "year_month",
-		EmployeesScope: freeepm.WorkloadListParamsEmployeesScopeAll,
-		Limit:          freeepm.Int(1),
-		Offset:         freeepm.Int(0),
+		EmployeesScope: freee.WorkloadListParamsEmployeesScopeAll,
+		Limit:          freee.Int(1),
+		Offset:         freee.Int(0),
 		PersonIDs:      []int64{0},
 		TeamIDs:        []int64{0},
 	})
 	if err != nil {
-		var apierr *freeepm.Error
+		var apierr *freee.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

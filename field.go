@@ -1,4 +1,4 @@
-package freeepm
+package freee
 
 import (
 	"github.com/zchee/freee-go/packages/param"
