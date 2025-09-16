@@ -563,7 +563,7 @@ func (r *WorkloadsOffsetMeta) UnmarshalJSON(data []byte) error {
 }
 
 type WorkloadsOffset[T any] struct {
-	Workloads []freeepm.Workload  `json:"workloads"`
+	Workloads []freee.Workload    `json:"workloads"`
 	Meta      WorkloadsOffsetMeta `json:"meta"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -622,7 +622,7 @@ func (r *WorkloadsOffset[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res
 
 type WorkloadsOffsetAutoPager[T any] struct {
 	page *WorkloadsOffset[T]
-	cur  freeepm.Workload
+	cur  freee.Workload
 	idx  int
 	run  int
 	err  error
@@ -653,7 +653,7 @@ func (r *WorkloadsOffsetAutoPager[T]) Next() bool {
 	return true
 }
 
-func (r *WorkloadsOffsetAutoPager[T]) Current() freeepm.Workload {
+func (r *WorkloadsOffsetAutoPager[T]) Current() freee.Workload {
 	return r.cur
 }
 

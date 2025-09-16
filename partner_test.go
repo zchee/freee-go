@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package freeepm_test
+package freee_test
 
 import (
 	"context"
@@ -22,17 +22,17 @@ func TestPartnerListWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := freeepm.NewClient(
+	client := freee.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Partners.List(context.TODO(), freeepm.PartnerListParams{
+	_, err := client.Partners.List(context.TODO(), freee.PartnerListParams{
 		CompanyID: 0,
-		Limit:     freeepm.Int(1),
-		Offset:    freeepm.Int(0),
+		Limit:     freee.Int(1),
+		Offset:    freee.Int(0),
 	})
 	if err != nil {
-		var apierr *freeepm.Error
+		var apierr *freee.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

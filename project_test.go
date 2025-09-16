@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package freeepm_test
+package freee_test
 
 import (
 	"context"
@@ -22,34 +22,34 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := freeepm.NewClient(
+	client := freee.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Projects.New(context.TODO(), freeepm.ProjectNewParams{
+	_, err := client.Projects.New(context.TODO(), freee.ProjectNewParams{
 		Code:                 "code",
 		CompanyID:            1,
 		FromDate:             "from_date",
 		Name:                 "name",
 		PmBudgetsCost:        4000,
 		ThruDate:             "thru_date",
-		AssignmentURLEnabled: freeepm.Bool(true),
-		ColorID:              freeepm.Int(3),
+		AssignmentURLEnabled: freee.Bool(true),
+		ColorID:              freee.Int(3),
 		ContractorIDs:        []int64{10},
-		Description:          freeepm.String("description"),
-		ManagerPersonID:      freeepm.Int(10),
-		Members: []freeepm.ProjectNewParamsMember{{
+		Description:          freee.String("description"),
+		ManagerPersonID:      freee.Int(10),
+		Members: []freee.ProjectNewParamsMember{{
 			BudgetsCost:         2000,
 			PersonID:            11,
 			UnitCostID:          3,
-			UseStandardUnitCost: freeepm.Bool(true),
+			UseStandardUnitCost: freee.Bool(true),
 		}},
 		OrdererIDs:         []int64{20},
-		PublishToEmployee:  freeepm.Bool(true),
-		SalesOrderStatusID: freeepm.Int(2),
+		PublishToEmployee:  freee.Bool(true),
+		SalesOrderStatusID: freee.Int(2),
 	})
 	if err != nil {
-		var apierr *freeepm.Error
+		var apierr *freee.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -66,19 +66,19 @@ func TestProjectGet(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := freeepm.NewClient(
+	client := freee.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Projects.Get(
 		context.TODO(),
 		0,
-		freeepm.ProjectGetParams{
+		freee.ProjectGetParams{
 			CompanyID: 0,
 		},
 	)
 	if err != nil {
-		var apierr *freeepm.Error
+		var apierr *freee.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -95,21 +95,21 @@ func TestProjectListWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := freeepm.NewClient(
+	client := freee.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Projects.List(context.TODO(), freeepm.ProjectListParams{
+	_, err := client.Projects.List(context.TODO(), freee.ProjectListParams{
 		CompanyID:         0,
 		ContractorIDs:     []int64{0},
-		Limit:             freeepm.Int(1),
+		Limit:             freee.Int(1),
 		ManagerIDs:        []int64{0},
-		Offset:            freeepm.Int(0),
-		OperationalStatus: freeepm.ProjectListParamsOperationalStatusPlanning,
+		Offset:            freee.Int(0),
+		OperationalStatus: freee.ProjectListParamsOperationalStatusPlanning,
 		OrdererIDs:        []int64{0},
 	})
 	if err != nil {
-		var apierr *freeepm.Error
+		var apierr *freee.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
