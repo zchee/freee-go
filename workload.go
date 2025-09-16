@@ -231,7 +231,7 @@ type WorkloadListParams struct {
 // URLQuery serializes [WorkloadListParams]'s query parameters as `url.Values`.
 func (r WorkloadListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
