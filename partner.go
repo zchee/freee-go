@@ -144,7 +144,7 @@ type PartnerListParams struct {
 // URLQuery serializes [PartnerListParams]'s query parameters as `url.Values`.
 func (r PartnerListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
