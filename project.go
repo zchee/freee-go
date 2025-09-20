@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/zchee/freee-go/internal/apijson"
 	"github.com/zchee/freee-go/internal/apiquery"
@@ -38,7 +39,7 @@ func NewProjectService(opts ...option.RequestOption) (r ProjectService) {
 
 // プロジェクトを登録することができます。
 func (r *ProjectService) New(ctx context.Context, body ProjectNewParams, opts ...option.RequestOption) (res *ProjectNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "projects"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -46,7 +47,7 @@ func (r *ProjectService) New(ctx context.Context, body ProjectNewParams, opts ..
 
 // ID に該当するプロジェクトの詳細情報を返します。
 func (r *ProjectService) Get(ctx context.Context, id int64, query ProjectGetParams, opts ...option.RequestOption) (res *ProjectGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := fmt.Sprintf("projects/%v", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return
@@ -56,7 +57,7 @@ func (r *ProjectService) Get(ctx context.Context, id int64, query ProjectGetPara
 // 注先、発注元で絞り込みできます。
 func (r *ProjectService) List(ctx context.Context, query ProjectListParams, opts ...option.RequestOption) (res *pagination.ProjectsOffset[ProjectListResponse], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "projects"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

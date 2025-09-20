@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/zchee/freee-go/internal/apijson"
 	"github.com/zchee/freee-go/internal/apiquery"
@@ -38,7 +39,7 @@ func NewTeamService(opts ...option.RequestOption) (r TeamService) {
 // 登録されているチームの一覧を返します。
 func (r *TeamService) List(ctx context.Context, query TeamListParams, opts ...option.RequestOption) (res *pagination.TeamsOffsetPage[TeamListResponse], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "teams"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

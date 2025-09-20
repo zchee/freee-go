@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/zchee/freee-go/internal/apijson"
@@ -39,7 +40,7 @@ func NewUnitCostService(opts ...option.RequestOption) (r UnitCostService) {
 // 従業員の単価マスタを返します。
 func (r *UnitCostService) List(ctx context.Context, query UnitCostListParams, opts ...option.RequestOption) (res *pagination.UnitCostsOffset[UnitCostListResponse], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "unit_costs"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

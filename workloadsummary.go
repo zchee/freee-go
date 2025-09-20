@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/zchee/freee-go/internal/apijson"
 	"github.com/zchee/freee-go/internal/apiquery"
@@ -39,7 +40,7 @@ func NewWorkloadSummaryService(opts ...option.RequestOption) (r WorkloadSummaryS
 // 絞り込みできます。
 func (r *WorkloadSummaryService) List(ctx context.Context, query WorkloadSummaryListParams, opts ...option.RequestOption) (res *pagination.WorkloadSummariesOffset[WorkloadSummaryListResponse], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "workload_summaries"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/zchee/freee-go/internal/apijson"
 	"github.com/zchee/freee-go/internal/apiquery"
@@ -39,7 +40,7 @@ func NewPersonService(opts ...option.RequestOption) (r PersonService) {
 // 従業員 ID で取得する情報を絞り込むことができます。
 func (r *PersonService) List(ctx context.Context, query PersonListParams, opts ...option.RequestOption) (res *pagination.PeopleOffset[PersonListResponse], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "people"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

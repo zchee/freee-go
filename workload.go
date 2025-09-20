@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/zchee/freee-go/internal/apijson"
@@ -38,7 +39,7 @@ func NewWorkloadService(opts ...option.RequestOption) (r WorkloadService) {
 
 // 工数を登録することが出来ます。
 func (r *WorkloadService) New(ctx context.Context, body WorkloadNewParams, opts ...option.RequestOption) (res *WorkloadNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "workloads"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -48,7 +49,7 @@ func (r *WorkloadService) New(ctx context.Context, body WorkloadNewParams, opts 
 // り込みできます。
 func (r *WorkloadService) List(ctx context.Context, query WorkloadListParams, opts ...option.RequestOption) (res *pagination.WorkloadsOffset[Workload], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "workloads"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

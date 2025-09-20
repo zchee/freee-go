@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/zchee/freee-go/internal/apijson"
 	"github.com/zchee/freee-go/internal/apiquery"
@@ -38,7 +39,7 @@ func NewPartnerService(opts ...option.RequestOption) (r PartnerService) {
 // 登録されている取引先の一覧を返します。
 func (r *PartnerService) List(ctx context.Context, query PartnerListParams, opts ...option.RequestOption) (res *pagination.PartnersOffset[PartnerListResponse], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "partners"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

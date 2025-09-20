@@ -5,6 +5,7 @@ package freee
 import (
 	"context"
 	"net/http"
+	"slices"
 
 	"github.com/zchee/freee-go/internal/apijson"
 	"github.com/zchee/freee-go/internal/requestconfig"
@@ -36,7 +37,7 @@ func NewUserService(opts ...option.RequestOption) (r UserService) {
 // ーと関連のあるすべての事業所の情報をリストで返します。 他の API のパラメータとし
 // て company_id が求められる場合は、この API で取得した company_id を使用します。
 func (r *UserService) GetMe(ctx context.Context, opts ...option.RequestOption) (res *UserGetMeResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "users/me"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
